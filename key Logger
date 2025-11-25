@@ -1,0 +1,32 @@
+from google.colab import output
+from IPython.display import display, HTML
+import datetime
+
+log = []
+
+js = """
+let box = document.getElementById('keybox');
+
+box.addEventListener('keydown', (e) => {
+    google.colab.kernel.invokeFunction(
+        'notebook.keypress',
+        [e.key],
+        {}
+    );
+});
+"""
+
+def record_key(key):
+    timestamp = datetime.datetime.now().isoformat()
+    log.append(f"{timestamp} : {key}")
+    print(f"Logged: {key}")
+
+output.register_callback('notebook.keypress', record_key)
+
+display(HTML("""
+<h3>Safe Keylogger Demo (Keys captured ONLY here)</h3>
+<textarea id="keybox" rows="6" cols="60"
+style="font-size:18px; padding:10px;"></textarea>
+"""))
+
+output.eval_js(js)
